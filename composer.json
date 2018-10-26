@@ -4,7 +4,7 @@
     "description": "binary buffer read and write",
     "keywords": ["binary", "buffer", "string", "read", "write"],
     "license": "MIT",
-    "homepage": "https://github.com/tianhe1986/FatExcel",
+    "homepage": "https://github.com/tianhe1986/FatBinaryBuffer",
     "require": {
         "php": ">=7.1"
     },
