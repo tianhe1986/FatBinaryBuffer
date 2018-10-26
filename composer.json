@@ -1,0 +1,24 @@
+{
+    "name": "tianhe1986/fatbinarybuffer",
+    "type": "library",
+    "description": "binary buffer read and write",
+    "keywords": ["binary", "buffer", "string", "read", "write"],
+    "license": "MIT",
+    "homepage": "https://github.com/tianhe1986/FatExcel",
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=6.5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "FatBinaryBuffer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FatBinaryBuffer\\Tests\\": "tests/"
+        }
+    }
+}
