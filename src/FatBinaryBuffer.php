@@ -90,6 +90,42 @@ class FatBinaryBuffer
         return $this;
     }
     
+    public function readUInt64()
+    {
+        $str = $this->readFromBuffer(8);
+        $array = unpack($this->isBigEndian ? "Jval" : "Pval", $str);
+        return $array["val"];
+    }
+    
+    public function writeUInt64($val)
+    {
+        $str = pack($this->isBigEndian ? "J" : "P", $val);
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
+    public function readInt64()
+    {
+        $str = $this->readFromBuffer(8);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
+        $array = unpack("qval", $str);
+        return $array["val"];
+    }
+    
+    public function writeInt64($val)
+    {
+        $str = pack("q", $val);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
     protected function readFromBuffer($len)
     {
         $toOffset = $this->offset + $len;
@@ -104,10 +140,10 @@ class FatBinaryBuffer
     
     protected function writeToBuffer($val)
     {
-        if ($this->offset === $this->len) { //在末尾
+        if ($this->offset === $this->len) { //at the end
             $this->buffer .= $val;
             $this->offset = $this->len = ($this->offset + strlen($val));
-        } else { //拼接
+        } else { // concat
             $len = strlen($val);
             $this->buffer = substr($this->buffer, 0, $this->offset) . $val . substr($this->buffer, $this->offset + $len);
             $this->offset += $len;

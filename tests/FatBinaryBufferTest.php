@@ -57,6 +57,49 @@ class FatExcelTest extends TestCase
         $this->assertEquals($a, $binaryBufferLE->readInt32());
     }
     
+    public function testUInt64()
+    {
+        $a = 123456;
+        $binaryBufferBE = new FatBinaryBuffer(true);
+        $binaryBufferLE = new FatBinaryBuffer(false);
+        
+        $binaryBufferBE->writeUInt64($a);
+        $this->assertEquals(8, $binaryBufferBE->getLength());
+        $this->assertEquals(pack("J", $a), $binaryBufferBE->getBuffer());
+        
+        $binaryBufferLE->writeUInt64($a);
+        $this->assertEquals(8, $binaryBufferLE->getLength());
+        $this->assertEquals(pack("P", $a), $binaryBufferLE->getBuffer());
+        
+        $binaryBufferBE->rewind();
+        $binaryBufferLE->rewind();
+        
+        $this->assertEquals($a, $binaryBufferBE->readUInt64());
+        $this->assertEquals($a, $binaryBufferLE->readUInt64());
+    }
+    
+    public function testInt64()
+    {
+        $a = -123456;
+        $binaryBufferBE = new FatBinaryBuffer(true);
+        $binaryBufferLE = new FatBinaryBuffer(false);
+        
+        $packed = pack("q", $a);
+        $binaryBufferBE->writeInt64($a);
+        $this->assertEquals(8, $binaryBufferBE->getLength());
+        $this->assertEquals($this->isSystemBigEndian ? $packed : strrev($packed), $binaryBufferBE->getBuffer());
+        
+        $binaryBufferLE->writeInt64($a);
+        $this->assertEquals(8, $binaryBufferLE->getLength());
+        $this->assertEquals($this->isSystemBigEndian ? strrev($packed) : $packed, $binaryBufferLE->getBuffer());
+        
+        $binaryBufferBE->rewind();
+        $binaryBufferLE->rewind();
+        
+        $this->assertEquals($a, $binaryBufferBE->readInt64());
+        $this->assertEquals($a, $binaryBufferLE->readInt64());
+    }
+    
     public function testMixedBigEndian()
     {
         
