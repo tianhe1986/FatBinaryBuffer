@@ -18,10 +18,13 @@ class FatBinaryBuffer
     
     protected $isSystemBigEndian;
     
+    protected $isDiffOrder;
+    
     public function __construct($isBigEndian = true)
     {
         $this->isBigEndian = $isBigEndian;
         $this->isSystemBigEndian = (pack("L", 1) === pack("N", 1));
+        $this->isDiffOrder = ($this->isBigEndian xor $this->isSystemBigEndian);
     }
     
     public function setBuffer($buffer)
@@ -61,6 +64,27 @@ class FatBinaryBuffer
     public function writeUInt32($val)
     {
         $str = pack($this->isBigEndian ? "N" : "V", $val);
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
+    public function readInt32()
+    {
+        $str = $this->readFromBuffer(4);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
+        $array = unpack("lval", $str);
+        return $array["val"];
+    }
+    
+    public function writeInt32($val)
+    {
+        $str = pack("l", $val);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
         $this->writeToBuffer($str);
         
         return $this;
