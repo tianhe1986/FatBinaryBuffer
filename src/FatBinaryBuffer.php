@@ -32,16 +32,30 @@ class FatBinaryBuffer
         $this->buffer = $buffer;
         $this->len = strlen($buffer);
         $this->offset = 0;
+        
+        return $this;
     }
     
     public function rewind()
     {
         $this->setOffset(0);
+        
+        return $this;
+    }
+    
+    public function clear()
+    {
+        $this->buffer = '';
+        $this->len = $this->offset = 0;
+        
+        return $this;
     }
     
     public function setOffset($offset)
     {
         $this->offset = $offset;
+        
+        return $this;
     }
     
     public function getOffset()
@@ -187,6 +201,38 @@ class FatBinaryBuffer
         if ($this->isDiffOrder) {
             $str = strrev($str);
         }
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
+    public function readStringByLength($length)
+    {
+        $str = $this->readFromBuffer($length);
+        $array = unpack("a{$length}val", $str);
+        
+        if (ord($array["val"][$length - 1]) !== 0) {
+            return $array["val"];
+        }
+        
+        $index = $length - 2;
+        while (ord($array["val"][$index]) === 0) {
+            $index--;
+            if ($index === 0) {
+                break;
+            }
+        }
+        
+        return substr($array["val"], 0, $index + 1);
+    }
+    
+    public function writeStringByLength($val, $length = 0)
+    {
+        if ($length === 0) {
+            $length = strlen($val);
+        }
+        
+        $str = pack("a{$length}", $val);
         $this->writeToBuffer($str);
         
         return $this;
