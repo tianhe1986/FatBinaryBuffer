@@ -23,7 +23,7 @@ class FatBinaryBuffer
     public function __construct($isBigEndian = true)
     {
         $this->isBigEndian = $isBigEndian;
-        $this->isSystemBigEndian = (pack("L", 1) === pack("N", 1));
+        $this->isSystemBigEndian = (pack("S", 1) === pack("n", 1));
         $this->isDiffOrder = ($this->isBigEndian xor $this->isSystemBigEndian);
     }
     
@@ -52,6 +52,42 @@ class FatBinaryBuffer
     public function getLength()
     {
         return $this->len;
+    }
+    
+    public function readUShort()
+    {
+        $str = $this->readFromBuffer(2);
+        $array = unpack($this->isBigEndian ? "nval" : "vval", $str);
+        return $array["val"];
+    }
+    
+    public function writeUShort($val)
+    {
+        $str = pack($this->isBigEndian ? "n" : "v", $val);
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
+    public function readShort()
+    {
+        $str = $this->readFromBuffer(2);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
+        $array = unpack("sval", $str);
+        return $array["val"];
+    }
+    
+    public function writeShort($val)
+    {
+        $str = pack("s", $val);
+        if ($this->isDiffOrder) {
+            $str = strrev($str);
+        }
+        $this->writeToBuffer($str);
+        
+        return $this;
     }
     
     public function readUInt32()
