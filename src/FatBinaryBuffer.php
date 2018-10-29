@@ -258,7 +258,7 @@ class FatBinaryBuffer
     {
         $toOffset = $this->offset + $len;
         if ($toOffset > $this->len) {
-            throw new Exception("len exceed");
+            throw new \Exception("len exceed", -101);
         }
         $str = substr($this->buffer, $this->offset, $len);
         $this->offset = $toOffset;
