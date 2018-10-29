@@ -15,6 +15,52 @@ class FatExcelTest extends TestCase
         $this->isSystemBigEndian = (pack("S", 1) === pack("n", 1));
     }
     
+    public function testUChar()
+    {
+        $a = 45;
+        $binaryBufferBE = new FatBinaryBuffer(true);
+        $binaryBufferLE = new FatBinaryBuffer(false);
+        
+        $binaryBufferBE->writeUChar($a);
+        $this->assertEquals(1, $binaryBufferBE->getLength());
+        $this->assertEquals(pack("C", $a), $binaryBufferBE->getBuffer());
+        $this->assertEquals($a, ord($binaryBufferBE->getBuffer()[0]));
+        
+        $binaryBufferLE->writeUChar($a);
+        $this->assertEquals(1, $binaryBufferLE->getLength());
+        $this->assertEquals(pack("C", $a), $binaryBufferLE->getBuffer());
+        $this->assertEquals($a, ord($binaryBufferLE->getBuffer()[0]));
+        
+        $binaryBufferBE->rewind();
+        $binaryBufferLE->rewind();
+        
+        $this->assertEquals($a, $binaryBufferBE->readUChar());
+        $this->assertEquals($a, $binaryBufferLE->readUChar());
+    }
+    
+    public function testChar()
+    {
+        $a = 46;
+        $binaryBufferBE = new FatBinaryBuffer(true);
+        $binaryBufferLE = new FatBinaryBuffer(false);
+        
+        $binaryBufferBE->writeChar($a);
+        $this->assertEquals(1, $binaryBufferBE->getLength());
+        $this->assertEquals(pack("c", $a), $binaryBufferBE->getBuffer());
+        $this->assertEquals($a, ord($binaryBufferBE->getBuffer()[0]));
+        
+        $binaryBufferLE->writeChar($a);
+        $this->assertEquals(1, $binaryBufferLE->getLength());
+        $this->assertEquals(pack("c", $a), $binaryBufferLE->getBuffer());
+        $this->assertEquals($a, ord($binaryBufferLE->getBuffer()[0]));
+        
+        $binaryBufferBE->rewind();
+        $binaryBufferLE->rewind();
+        
+        $this->assertEquals($a, $binaryBufferBE->readChar());
+        $this->assertEquals($a, $binaryBufferLE->readChar());
+    }
+    
     public function testUShort()
     {
         $a = 0x127;

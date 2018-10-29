@@ -54,6 +54,36 @@ class FatBinaryBuffer
         return $this->len;
     }
     
+    public function readUChar()
+    {
+        $str = $this->readFromBuffer(1);
+        $array = unpack("Cval", $str);
+        return $array["val"];
+    }
+    
+    public function writeUChar($val)
+    {
+        $str = pack("C", $val);
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
+    public function readChar()
+    {
+        $str = $this->readFromBuffer(1);
+        $array = unpack("cval", $str);
+        return $array["val"];
+    }
+    
+    public function writeChar($val)
+    {
+        $str = pack("c", $val);
+        $this->writeToBuffer($str);
+        
+        return $this;
+    }
+    
     public function readUShort()
     {
         $str = $this->readFromBuffer(2);
