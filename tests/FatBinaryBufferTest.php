@@ -229,6 +229,23 @@ class FatExcelTest extends TestCase
         $this->assertEquals(substr($a, 0, 4), $c);
     }
     
+    public function testString()
+    {
+        $a = "Hello World";
+        $len = strlen($a);
+        
+        $binaryBuffer = new FatBinaryBuffer();
+        $binaryBuffer->writeString($a);
+        
+        $this->assertEquals(4 + $len, $binaryBuffer->getLength());
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($len, $binaryBuffer->readUInt32());
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($a, $binaryBuffer->readString());
+    }
+    
     public function testMixedBigEndian()
     {
         

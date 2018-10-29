@@ -238,6 +238,22 @@ class FatBinaryBuffer
         return $this;
     }
     
+    // read length first, then real string
+    public function readString()
+    {
+        $length = $this->readUInt32();
+        
+        return $this->readStringByLength($length);
+    }
+    
+    //write length first, then real string
+    public function writeString($val)
+    {
+        $length = strlen($val);
+        
+        return $this->writeUInt32($length)->writeStringByLength($val, $length);
+    }
+    
     protected function readFromBuffer($len)
     {
         $toOffset = $this->offset + $len;
