@@ -5,16 +5,17 @@ FatBinaryBuffer is a lightweight library for reading/writing binary string.
 PHP 7.1 or higher
 
 #Installation
-<code>
+
+```
  composer require tianhe1986/fatbinarybuffer
-</code>
+```
 
 and then in your code
 
-<code>
+```
 require_once __DIR__ . '/vendor/autoload.php';
 use FatBinaryBuffer\FatBinaryBuffer;
-</code>
+```
 
 #Support
 It supports char/unsigned char, short/unsigned short, int32/uint32, int64/uint64, string, string with length.  
@@ -22,13 +23,15 @@ It supports char/unsigned char, short/unsigned short, int32/uint32, int64/uint64
 
 #Usage
 ### big endian vs little endian
-<code>
+
+```
 $binaryBufferBE = new FatBinaryBuffer(true); //big endian
 $binaryBufferLE = new FatBinaryBuffer(false); //little endian
-</code>
+```
 
 ### buffer opration
-<code>
+
+```
 $binaryBuffer = new FatBinaryBuffer();
 
 //set buffer, would calculate length and offset automaticly
@@ -46,10 +49,11 @@ $binaryBuffer->setOffset(4); // read/write from the 4th byte
 
 // rewind, just set offset 0
 $binaryBuffer->rewind();
-</code>
+```
 
 ### writing data
-<code>
+
+```
 $binaryBuffer = new FatBinaryBuffer(true);
 
 // char and unsigned char, must pass a number, not a char, or you can use `ord` function for transformation
@@ -73,10 +77,11 @@ $binaryBuffer->writeString("张学友！张学友！我们爱你！");
 
 // string with given length, padding with NUL
 $binaryBuffer->writeStringByLength("Hello world", 3); // would get 'Hel' when reading
-</code>
+```
 
 ### reading data
-<code>
+
+```
 $newBuffer = new FatBinaryBuffer();
 $newBuffer->setBuffer($binaryBuffer->getBuffer());
 
@@ -101,11 +106,12 @@ $str = $newBuffer->readString();
 
 // read string with given length, would remove NUL at the end of the string
 $str = $newBuffer->readStringByLength(3);
-</code>
+```
 
 ### combine with websocket server
-Taking [Workerman](https://github.com/walkor/workerman) for exmaple.  
-<code>
+Taking [Workerman](https://github.com/walkor/workerman) for exmaple.
+
+```
 require_once __DIR__ . '/vendor/autoload.php';
 use Workerman\Worker;
 use Workerman\Protocols\Websocket;
@@ -151,10 +157,11 @@ $ws_worker->onMessage = function($connection, $data)
     }
 };
 Worker::runAll();
-</code>
+```
 
 Using [Layabox](https://www.layabox.com/) as a typescript client for testing. It works fine.  
-<code>
+
+```
 import Socket = Laya.Socket;
 import Byte = Laya.Byte;
 
@@ -247,4 +254,4 @@ class TestSocket {
         }
     }
 }
-</code>
+```
