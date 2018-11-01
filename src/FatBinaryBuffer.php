@@ -186,35 +186,43 @@ class FatBinaryBuffer
         return $this;
     }
     
-    public function readUInt64()
+    public function readUInt64($isBigEndian = null)
     {
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
         $str = $this->readFromBuffer(8);
-        $array = unpack($this->isBigEndian ? "Jval" : "Pval", $str);
+        $array = unpack($isBigEndian ? "Jval" : "Pval", $str);
         return $array["val"];
     }
     
-    public function writeUInt64($val)
+    public function writeUInt64($val, $isBigEndian = null)
     {
-        $str = pack($this->isBigEndian ? "J" : "P", $val);
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
+        $str = pack($isBigEndian ? "J" : "P", $val);
         $this->writeToBuffer($str);
         
         return $this;
     }
     
-    public function readInt64()
+    public function readInt64($isBigEndian = null)
     {
         $str = $this->readFromBuffer(8);
-        if ($this->isDiffOrder) {
+        $isDiffOrder = (($isBigEndian === null) ? $this->isDiffOrder : ($isBigEndian xor $this->isSystemBigEndian));
+        if ($isDiffOrder) {
             $str = strrev($str);
         }
         $array = unpack("qval", $str);
         return $array["val"];
     }
     
-    public function writeInt64($val)
+    public function writeInt64($val, $isBigEndian = null)
     {
         $str = pack("q", $val);
-        if ($this->isDiffOrder) {
+        $isDiffOrder = (($isBigEndian === null) ? $this->isDiffOrder : ($isBigEndian xor $this->isSystemBigEndian));
+        if ($isDiffOrder) {
             $str = strrev($str);
         }
         $this->writeToBuffer($str);
@@ -257,7 +265,7 @@ class FatBinaryBuffer
     // read length first, then real string
     public function readString()
     {
-        $length = $this->readUInt32();
+        $length = $this->readUInt32(true);
         
         return $this->readStringByLength($length);
     }
@@ -267,7 +275,7 @@ class FatBinaryBuffer
     {
         $length = strlen($val);
         
-        return $this->writeUInt32($length)->writeStringByLength($val, $length);
+        return $this->writeUInt32($length, true)->writeStringByLength($val, $length);
     }
     
     protected function readFromBuffer($len)
