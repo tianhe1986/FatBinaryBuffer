@@ -98,35 +98,43 @@ class FatBinaryBuffer
         return $this;
     }
     
-    public function readUShort()
+    public function readUShort($isBigEndian = null)
     {
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
         $str = $this->readFromBuffer(2);
-        $array = unpack($this->isBigEndian ? "nval" : "vval", $str);
+        $array = unpack($isBigEndian ? "nval" : "vval", $str);
         return $array["val"];
     }
     
-    public function writeUShort($val)
+    public function writeUShort($val, $isBigEndian = null)
     {
-        $str = pack($this->isBigEndian ? "n" : "v", $val);
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
+        $str = pack($isBigEndian ? "n" : "v", $val);
         $this->writeToBuffer($str);
         
         return $this;
     }
     
-    public function readShort()
+    public function readShort($isBigEndian = null)
     {
         $str = $this->readFromBuffer(2);
-        if ($this->isDiffOrder) {
+        $isDiffOrder = (($isBigEndian === null) ? $this->isDiffOrder : ($isBigEndian xor $this->isSystemBigEndian));
+        if ($isDiffOrder) {
             $str = strrev($str);
         }
         $array = unpack("sval", $str);
         return $array["val"];
     }
     
-    public function writeShort($val)
+    public function writeShort($val, $isBigEndian = null)
     {
         $str = pack("s", $val);
-        if ($this->isDiffOrder) {
+        $isDiffOrder = (($isBigEndian === null) ? $this->isDiffOrder : ($isBigEndian xor $this->isSystemBigEndian));
+        if ($isDiffOrder) {
             $str = strrev($str);
         }
         $this->writeToBuffer($str);

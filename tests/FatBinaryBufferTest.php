@@ -86,6 +86,32 @@ class FatExcelTest extends TestCase
         $this->assertEquals($a, $binaryBufferLE->readUShort());
     }
     
+    public function testUShortWithEndian()
+    {
+        $a = 0x127;
+        $random = mt_rand(1, 10);
+        $binaryBuffer = new FatBinaryBuffer(($random % 2) === 0);
+        
+        $binaryBuffer->writeUShort($a, true);
+        $this->assertEquals(2, $binaryBuffer->getLength());
+        $this->assertEquals(pack("n", $a), $binaryBuffer->getBuffer());
+        $this->assertEquals(0x1, ord($binaryBuffer->getBuffer()[0]));
+        $this->assertEquals(0x27, ord($binaryBuffer->getBuffer()[1]));
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($a, $binaryBuffer->readUShort(true));
+        
+        $binaryBuffer->clear();
+        $binaryBuffer->writeUShort($a, false);
+        $this->assertEquals(2, $binaryBuffer->getLength());
+        $this->assertEquals(pack("v", $a), $binaryBuffer->getBuffer());
+        $this->assertEquals(0x27, ord($binaryBuffer->getBuffer()[0]));
+        $this->assertEquals(0x1, ord($binaryBuffer->getBuffer()[1]));
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($a, $binaryBuffer->readUShort(false));
+    }
+    
     public function testShort()
     {
         $a = 0x127;
@@ -110,6 +136,33 @@ class FatExcelTest extends TestCase
         
         $this->assertEquals($a, $binaryBufferBE->readShort());
         $this->assertEquals($a, $binaryBufferLE->readShort());
+    }
+    
+    public function testShortWithEndian()
+    {
+        $a = 0x127;
+        $random = mt_rand(1, 10);
+        $binaryBuffer = new FatBinaryBuffer(($random % 2) === 0);
+        
+        $packed = pack("s", $a);
+        $binaryBuffer->writeShort($a, true);
+        $this->assertEquals(2, $binaryBuffer->getLength());
+        $this->assertEquals($this->isSystemBigEndian ? $packed : strrev($packed), $binaryBuffer->getBuffer());
+        $this->assertEquals(0x1, ord($binaryBuffer->getBuffer()[0]));
+        $this->assertEquals(0x27, ord($binaryBuffer->getBuffer()[1]));
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($a, $binaryBuffer->readShort(true));
+        
+        $binaryBuffer->clear();
+        $binaryBuffer->writeShort($a, false);
+        $this->assertEquals(2, $binaryBuffer->getLength());
+        $this->assertEquals($this->isSystemBigEndian ? strrev($packed) : $packed, $binaryBuffer->getBuffer());
+        $this->assertEquals(0x27, ord($binaryBuffer->getBuffer()[0]));
+        $this->assertEquals(0x1, ord($binaryBuffer->getBuffer()[1]));
+        
+        $binaryBuffer->rewind();
+        $this->assertEquals($a, $binaryBuffer->readShort(false));
     }
     
     public function testUInt32()
