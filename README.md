@@ -2,7 +2,7 @@
 FatBinaryBuffer is a lightweight library for reading/writing binary string.
 
 #Requires
-PHP 7.1 or higher
+PHP 7.0 or higher
 
 #Installation
 
