@@ -108,6 +108,26 @@ $str = $newBuffer->readString();
 $str = $newBuffer->readStringByLength(3);
 ```
 
+### writing/reading with endian (version >= 1.1)
+From 1.1, short/ushort/int32/uint32/int64/uint64 cound handle with giving endian.
+
+```
+//whatever initial endian
+$binaryBuffer = new FatBinaryBuffer((mt_rand(1, 10) % 2) === 0);
+
+//write with big endian
+$binaryBuffer->writeShort(-1234, true);
+
+//write with little endian
+$binaryBuffer->writeUShort(1236, false);
+
+//read with big endian
+$binaryBuffer->readInt32(true);
+
+//read with little endian
+$binaryBuffer->readUInt64(false);
+```
+
 ### combine with websocket server
 Taking [Workerman](https://github.com/walkor/workerman) for exmaple.
 
