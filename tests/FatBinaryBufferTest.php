@@ -491,6 +491,50 @@ class FatExcelTest extends TestCase
         $this->assertEquals("gog", $newBuffer->readStringByLength(3));
     }
     
+    public function testMixedWithEndian()
+    {
+        $binaryBufferLE = new FatBinaryBuffer((mt_rand(1, 10) % 2) === 0);
+        
+        $binaryBufferLE->writeChar(11);
+        $binaryBufferLE->writeString("张学友！张学友！");
+        $binaryBufferLE->writeShort(154, true);
+        $binaryBufferLE->writeString("我爱黎明！");
+        $binaryBufferLE->writeInt32(1991, true);
+        $binaryBufferLE->writeString("金秀贤！金秀贤！");
+        $binaryBufferLE->writeInt64(65544, false);
+        $binaryBufferLE->writeString("我爱黄致列！");
+        
+        $binaryBufferLE->writeUInt32(7654, true);
+        $binaryBufferLE->writeStringByLength("ok", 6);
+        $binaryBufferLE->writeUInt64(76543, false);
+        $binaryBufferLE->writeStringByLength("xueyin");
+        $binaryBufferLE->writeUShort(666, false);
+        $binaryBufferLE->writeStringByLength("fat");
+        $binaryBufferLE->writeUChar(233);
+        $binaryBufferLE->writeStringByLength("gogogo", 3);
+        
+        $newBuffer = new FatBinaryBuffer((mt_rand(1, 10) % 2) === 0);
+        $newBuffer->setBuffer($binaryBufferLE->getBuffer());
+        
+        $this->assertEquals(11, $newBuffer->readChar());
+        $this->assertEquals("张学友！张学友！", $newBuffer->readString());
+        $this->assertEquals(154, $newBuffer->readShort(true));
+        $this->assertEquals("我爱黎明！", $newBuffer->readString());
+        $this->assertEquals(1991, $newBuffer->readInt32(true));
+        $this->assertEquals("金秀贤！金秀贤！", $newBuffer->readString());
+        $this->assertEquals(65544, $newBuffer->readInt64(false));
+        $this->assertEquals("我爱黄致列！", $newBuffer->readString());
+        
+        $this->assertEquals(7654, $newBuffer->readUInt32(true));
+        $this->assertEquals("ok", $newBuffer->readStringByLength(6));
+        $this->assertEquals(76543, $newBuffer->readUInt64(false));
+        $this->assertEquals("xueyin", $newBuffer->readStringByLength(6));
+        $this->assertEquals(666, $newBuffer->readUShort(false));
+        $this->assertEquals("fat", $newBuffer->readStringByLength(3));
+        $this->assertEquals(233, $newBuffer->readUChar());
+        $this->assertEquals("gog", $newBuffer->readStringByLength(3));
+    }
+    
     public function testException()
     {
         $this->expectExceptionCode(-101);
