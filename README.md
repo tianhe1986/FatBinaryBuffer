@@ -1,10 +1,10 @@
 # FatBinaryBuffer
 FatBinaryBuffer is a lightweight library for reading/writing binary string.
 
-#Requires
+# Requires
 PHP 7.0 or higher
 
-#Installation
+# Installation
 
 ```
  composer require tianhe1986/fatbinarybuffer
@@ -17,11 +17,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 use FatBinaryBuffer\FatBinaryBuffer;
 ```
 
-#Support
+# Support
 It supports char/unsigned char, short/unsigned short, int32/uint32, int64/uint64, string, string with length.  
 **Do not support float and double!**
 
-#Usage
+# Usage
 ### big endian vs little endian
 
 ```
