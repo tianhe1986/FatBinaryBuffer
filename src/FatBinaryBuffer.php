@@ -263,19 +263,27 @@ class FatBinaryBuffer
     }
     
     // read length first, then real string
-    public function readString()
+    public function readString($isBigEndian = null)
     {
-        $length = $this->readUInt32(true);
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
+
+        $length = $this->readUInt32($isBigEndian);
         
         return $this->readStringByLength($length);
     }
     
     //write length first, then real string
-    public function writeString($val)
+    public function writeString($val, $isBigEndian = null)
     {
         $length = strlen($val);
+
+        if ($isBigEndian === null) {
+            $isBigEndian = $this->isBigEndian;
+        }
         
-        return $this->writeUInt32($length, true)->writeStringByLength($val, $length);
+        return $this->writeUInt32($length, $isBigEndian)->writeStringByLength($val, $length);
     }
     
     protected function readFromBuffer($len)

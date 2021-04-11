@@ -391,13 +391,14 @@ class FatExcelTest extends TestCase
         $len = strlen($a);
         
         $random = mt_rand(1, 10);
-        $binaryBuffer = new FatBinaryBuffer(($random % 2) === 0);
+        $isBigEndian = ($random % 2) === 0;
+        $binaryBuffer = new FatBinaryBuffer($isBigEndian);
         $binaryBuffer->writeString($a);
         
         $this->assertEquals(4 + $len, $binaryBuffer->getLength());
         
         $binaryBuffer->rewind();
-        $this->assertEquals($len, $binaryBuffer->readUInt32(true));
+        $this->assertEquals($len, $binaryBuffer->readUInt32($isBigEndian));
         
         $binaryBuffer->rewind();
         $this->assertEquals($a, $binaryBuffer->readString());
@@ -493,7 +494,9 @@ class FatExcelTest extends TestCase
     
     public function testMixedWithEndian()
     {
-        $binaryBufferLE = new FatBinaryBuffer((mt_rand(1, 10) % 2) === 0);
+        $isBigEndian = (mt_rand(1, 10) % 2) === 0;
+
+        $binaryBufferLE = new FatBinaryBuffer($isBigEndian);
         
         $binaryBufferLE->writeChar(11);
         $binaryBufferLE->writeString("张学友！张学友！");
@@ -512,18 +515,18 @@ class FatExcelTest extends TestCase
         $binaryBufferLE->writeStringByLength("fat");
         $binaryBufferLE->writeUChar(233);
         $binaryBufferLE->writeStringByLength("gogogo", 3);
-        
+
         $newBuffer = new FatBinaryBuffer((mt_rand(1, 10) % 2) === 0);
         $newBuffer->setBuffer($binaryBufferLE->getBuffer());
         
         $this->assertEquals(11, $newBuffer->readChar());
-        $this->assertEquals("张学友！张学友！", $newBuffer->readString());
+        $this->assertEquals("张学友！张学友！", $newBuffer->readString($isBigEndian));
         $this->assertEquals(154, $newBuffer->readShort(true));
-        $this->assertEquals("我爱黎明！", $newBuffer->readString());
+        $this->assertEquals("我爱黎明！", $newBuffer->readString($isBigEndian));
         $this->assertEquals(1991, $newBuffer->readInt32(true));
-        $this->assertEquals("金秀贤！金秀贤！", $newBuffer->readString());
+        $this->assertEquals("金秀贤！金秀贤！", $newBuffer->readString($isBigEndian));
         $this->assertEquals(65544, $newBuffer->readInt64(false));
-        $this->assertEquals("我爱黄致列！", $newBuffer->readString());
+        $this->assertEquals("我爱黄致列！", $newBuffer->readString($isBigEndian));
         
         $this->assertEquals(7654, $newBuffer->readUInt32(true));
         $this->assertEquals("ok", $newBuffer->readStringByLength(6));
